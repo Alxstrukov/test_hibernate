@@ -16,11 +16,15 @@ public class App {
             session.beginTransaction();
 
             Person person = session.find(Person.class, 8);//получаем человека из БД.
-            person.setName("Veroni4ka");// Изменяем у человека имя. Hibernate это поймёт и в БД тоже изменит имя.
+            session.remove(person);// Hibernate удалит из БД этого человека
 
             session.getTransaction().commit();//сохраняем транзакцию
 
             System.out.println(person);
+
+            /*System.out.println(person);
+            в БД человека уже нет,
+            но в Java (область памяти куча (heap)) он остался и будет выведен в консоль */
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
