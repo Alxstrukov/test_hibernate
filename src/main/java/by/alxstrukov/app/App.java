@@ -15,15 +15,12 @@ public class App {
 
             session.beginTransaction();
 
-            Person person1 = new Person(27, "Veronika");
-            Person person2 = new Person(42, "Klim");
-            Person person3 = new Person(41, "Pavel");
+            Person person = session.find(Person.class, 8);//получаем человека из БД.
+            person.setName("Veroni4ka");// Изменяем у человека имя. Hibernate это поймёт и в БД тоже изменит имя.
 
-            session.persist(person1);
-            session.persist(person2);
-            session.persist(person3);
+            session.getTransaction().commit();//сохраняем транзакцию
 
-            session.getTransaction().commit();
+            System.out.println(person);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
