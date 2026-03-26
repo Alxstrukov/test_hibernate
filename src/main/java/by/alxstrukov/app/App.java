@@ -15,8 +15,14 @@ public class App {
 
             session.beginTransaction();
 
-            Person person = session.getReference(Person.class, 1);
-            System.out.println(person);
+            Person person1 = new Person(27, "Veronika");
+            Person person2 = new Person(42, "Klim");
+            Person person3 = new Person(41, "Pavel");
+
+            session.persist(person1);
+            session.persist(person2);
+            session.persist(person3);
+
             session.getTransaction().commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
