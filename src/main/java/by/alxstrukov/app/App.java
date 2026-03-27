@@ -5,6 +5,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.List;
+
 public class App {
     public static void main(String[] args) {
         Configuration configuration = new Configuration().addAnnotatedClass(Person.class);
@@ -14,17 +16,11 @@ public class App {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-
-            Person person = session.find(Person.class, 8);//получаем человека из БД.
-            session.remove(person);// Hibernate удалит из БД этого человека
+            String hqlQuery = "from Person";//Hibernate работает не с таблицами,а с java-классами (сущности @Entity)
+            List<Person> personList = session.createQuery(hqlQuery, Person.class).getResultList();
+            personList.forEach(System.out::println);
 
             session.getTransaction().commit();//сохраняем транзакцию
-
-            System.out.println(person);
-
-            /*System.out.println(person);
-            в БД человека уже нет,
-            но в Java (область памяти куча (heap)) он остался и будет выведен в консоль */
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
