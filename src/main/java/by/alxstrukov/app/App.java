@@ -16,7 +16,10 @@ public class App {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            String hqlQuery = "from Person";//Hibernate работает не с таблицами,а с java-классами (сущности @Entity)
+
+            //Hibernate работает не с таблицами,а с java-классами (сущности @Entity)
+            int minAge = 50;
+            String hqlQuery = "from Person where age < " + minAge;//hql - вывести всех людей у которых возраст > 50
             List<Person> personList = session.createQuery(hqlQuery, Person.class).getResultList();
             personList.forEach(System.out::println);
 
