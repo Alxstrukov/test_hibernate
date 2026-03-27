@@ -22,7 +22,7 @@ public class App {
 
             //Hibernate работает не с таблицами, а с java-классами (сущности @Entity)
 
-            String hqlQuery = "update Person set name=:newName where age >:targetAge";
+            String hqlQuery = "delete Person where age >:targetAge";
 
             /*hqlQuery запрос обновит столбец (поле) name всем строкам в БД в таблице people
             (но помним что Hibernate работает не с БД, а с java-сущностями,
@@ -30,14 +30,13 @@ public class App {
             * помеченный аннотациями @Entity и @Table (name = "people") */
 
             int updateCount = session.createQuery(hqlQuery)
-                    .setParameter("newName", "Some name")
                     .setParameter("targetAge", 50)
                     .executeUpdate();
 
             /*При выполнении hql-запросов на обновление/удаление данных, в метод createQuery() не нужно передавать
             * имя класса сущности (например Person.class) как при запросах типа /select * from Person/
-            * нужно передать только сам запрос, в котором указать имена параметров (:newName, :newAge)
-            *  для условий (where=...) и изменений (set=...)
+            * нужно передать только сам запрос, в котором указать имена параметров (:newAge)
+            *  для условия (where=...)
             * затем после метода createQuery() вызвать нужное кол-во раз метод setParameter()
             * в который в качестве аргументов передать имя нужного параметра и его значение
             * после чего вызвать метод executeUpdate();
