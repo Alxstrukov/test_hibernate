@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "people")
 @Data
@@ -19,6 +21,10 @@ public class Person {
 
     @Column(name = "age")
     private int age;
+
+    @Column(name = "items")
+    @OneToMany(mappedBy = "owner")
+    private List<Item> items;
 
     public Person(int age, String name) {
         this.age = age;
