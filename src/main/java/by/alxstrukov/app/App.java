@@ -1,5 +1,6 @@
 package by.alxstrukov.app;
 
+import by.alxstrukov.app.model.Item;
 import by.alxstrukov.app.model.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,7 +10,9 @@ import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-        Configuration configuration = new Configuration().addAnnotatedClass(Person.class);
+        Configuration configuration = new Configuration()
+                .addAnnotatedClass(Person.class)
+                .addAnnotatedClass(Item.class);
 
 
         try (SessionFactory sessionFactory = configuration.buildSessionFactory();
@@ -17,32 +20,30 @@ public class App {
             
             /*ВАЖНО - session и sessionFactory открывать в блоке try(session, sessionFactory){}
             чтобы эти ресурсы потом закрылись*/
-            
+
             session.beginTransaction();
 
-            //Hibernate работает не с таблицами, а с java-классами (сущности @Entity)
+            /*Добавление товара к человеку*/
 
-            String hqlQuery = "delete Person where age >:targetAge";
+//            Person person = new Person(27, "Egor");
 
-            /*hqlQuery запрос обновит столбец (поле) name всем строкам в БД в таблице people
-            (но помним что Hibernate работает не с БД, а с java-сущностями,
-            * то есть, он знает что таблицу people из БД в java представляет класс Person
-            * помеченный аннотациями @Entity и @Table (name = "people") */
+            Person personFromDataBase = session.find(Person.class, 3);
+            System.out.println(personFromDataBase);
+            List<Item> items = personFromDataBase.getItems();
+            System.out.println(items);//проверю у человека из БД список товаров ему принадлежащих
 
-            int updateCount = session.createQuery(hqlQuery)
-                    .setParameter("targetAge", 50)
-                    .executeUpdate();
+            Item item = new Item("Notebook", personFromDataBase);
+            session.persist(item);//сохраняю в БД новый товар который принадлежит человеку в БД под id=3
 
-            /*При выполнении hql-запросов на обновление/удаление данных, в метод createQuery() не нужно передавать
-            * имя класса сущности (например Person.class) как при запросах типа /select * from Person/
-            * нужно передать только сам запрос, в котором указать имена параметров (:newAge)
-            *  для условия (where=...)
-            * затем после метода createQuery() вызвать нужное кол-во раз метод setParameter()
-            * в который в качестве аргументов передать имя нужного параметра и его значение
-            * после чего вызвать метод executeUpdate();
-            * */
+            System.out.println(items);//проверю, изменился ли список товаров у человека
+            // *Нет, не изменится* - потому что у Hibernate есть свой кэш и так как он работает с ним,
+            //то он достанет оттуда объект personFromDataBase.getItems() в котором нет новых товаров.
+            //Чтобы этого не было, нужно обязательно после сохранения в БД нового товара,
+            // добавить его и в список товаров для personFromDataBase -> personFromDataBase.getItems().add(item);
 
-            System.out.println(updateCount);//выведет в консоль кол-во обновленных элементов
+            personFromDataBase.getItems().add(item);//в список товаров человека под id=3 добавили новый товар
+
+            System.out.println(items);
 
 
             session.getTransaction().commit();//сохраняем транзакцию
