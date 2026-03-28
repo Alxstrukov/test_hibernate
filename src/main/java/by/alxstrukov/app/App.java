@@ -23,27 +23,17 @@ public class App {
 
             session.beginTransaction();
 
-            /*Добавление товара к человеку*/
+            /*Удаление товаров относящихся к человеку*/
 
-//            Person person = new Person(27, "Egor");
+            Person person = session.find(Person.class, 3);
+            List<Item> items = person.getItems();
 
-            Person personFromDataBase = session.find(Person.class, 3);
-            System.out.println(personFromDataBase);
-            List<Item> items = personFromDataBase.getItems();
-            System.out.println(items);//проверю у человека из БД список товаров ему принадлежащих
+            //SQL
+            items.forEach(session::remove);//в цикле удаляем поочередно все товары у человека (HQL)
 
-            Item item = new Item("Notebook", personFromDataBase);
-            session.persist(item);//сохраняю в БД новый товар который принадлежит человеку в БД под id=3
+            //Не порождает SQl, но нужно для того, чтобы обновилось в кэше Hibernate
+            items.clear();//очищаем список товаров у человека (Java)
 
-            System.out.println(items);//проверю, изменился ли список товаров у человека
-            // *Нет, не изменится* - потому что у Hibernate есть свой кэш и так как он работает с ним,
-            //то он достанет оттуда объект personFromDataBase.getItems() в котором нет новых товаров.
-            //Чтобы этого не было, нужно обязательно после сохранения в БД нового товара,
-            // добавить его и в список товаров для personFromDataBase -> personFromDataBase.getItems().add(item);
-
-            personFromDataBase.getItems().add(item);//в список товаров человека под id=3 добавили новый товар
-
-            System.out.println(items);
 
 
             session.getTransaction().commit();//сохраняем транзакцию
