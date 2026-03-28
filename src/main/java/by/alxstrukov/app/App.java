@@ -23,16 +23,17 @@ public class App {
 
             session.beginTransaction();
 
-            /*Удаление товаров относящихся к человеку*/
+            /*Удаление человека с оставлением товаров относящихся к нему*/
 
-            Person person = session.find(Person.class, 3);
+            Person person = session.find(Person.class, 1);
             List<Item> items = person.getItems();
 
             //SQL
-            items.forEach(session::remove);//в цикле удаляем поочередно все товары у человека (HQL)
+            session.remove(person);//удаляем человека
 
             //Не порождает SQl, но нужно для того, чтобы обновилось в кэше Hibernate
-            items.clear();//очищаем список товаров у человека (Java)
+            items.forEach(i->i.setOwner(null));//проходимся по списку товаров у человека которого удалили,
+            //у каждого из этих товаров в качестве владельца ставим null
 
 
 
