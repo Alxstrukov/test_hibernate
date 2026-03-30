@@ -22,17 +22,16 @@ public class App {
             /*ВАЖНО - session и sessionFactory открывать в блоке try(session, sessionFactory){}
             чтобы эти ресурсы потом закрылись*/
 
+            /*Получение сущности из БД, а также данные относящиеся к ней. Каскадирование в Hibernate*/
+
             session.beginTransaction();
 
-            /*Сохранение человека в БД, а также данные относящиеся к нему. Каскадирование в Hibernate*/
+            Person person = session.find(Person.class, 24);
+            System.out.println(person.getPassport());
 
+            Passport passport = session.find(Passport.class, 22);
+            System.out.println(passport.getOwner().getPassport());
 
-            Passport passport = new Passport(525397);
-            Person person = new Person(16, "Viktor");
-
-            person.setPassport(passport);
-
-            session.persist(person);
 
             session.getTransaction().commit();//сохраняем транзакцию
         } catch (Exception e) {
