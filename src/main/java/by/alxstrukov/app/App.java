@@ -1,6 +1,7 @@
 package by.alxstrukov.app;
 
-import by.alxstrukov.app.model.Passport;
+import by.alxstrukov.app.model.Actor;
+import by.alxstrukov.app.model.Movie;
 import by.alxstrukov.app.model.Person;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,8 +10,8 @@ import org.hibernate.cfg.Configuration;
 public class App {
     public static void main(String[] args) {
         Configuration configuration = new Configuration()
-                .addAnnotatedClass(Person.class)
-                .addAnnotatedClass(Passport.class);
+                .addAnnotatedClass(Actor.class)
+                .addAnnotatedClass(Movie.class);
 
 
         try (SessionFactory sessionFactory = configuration.buildSessionFactory();
@@ -21,9 +22,7 @@ public class App {
 
             session.beginTransaction();
 
-            Person person = session.find(Person.class, 3);
-            System.out.println(person + person.getPassport().toString());
-
+            //здесь будет код
 
             session.getTransaction().commit();//сохраняем транзакцию
         } catch (Exception e) {
